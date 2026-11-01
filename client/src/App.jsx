@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 
-const API = 'http://localhost:5000/api';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+const API = `${BACKEND_URL}/api`;
 export default function App() {
   const [session, setSession] = useState(() => {
     try { return JSON.parse(localStorage.getItem('cs-session') || 'null'); } catch { return null; }
@@ -41,7 +42,7 @@ export default function App() {
   }
   useEffect(() => {
     if (!session?.token) return;
-    const socket = io('http://localhost:5000', { auth: { token: session.token } });
+    const socket = io(BACKEND_URL, { auth: { token: session.token } });
     socketRef.current = socket;
     socket.on('presence', setOnline);
     socket.on('new-message', msg => {
